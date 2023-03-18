@@ -2,6 +2,8 @@ import cv2, mediapipe as mp, time
 from judemath import *
 
 class handcontroller:
+    horizontalFlip = True #Set to True to flip horizontally - needed if using a laptop camera cause physics :)
+    showCam = False
     cap = None
 
     hands = None
@@ -30,6 +32,10 @@ class handcontroller:
     def update(self):
         while True:
             success, img = self.cap.read()
+            
+            if(self.horizontalFlip):
+                img = cv2.flip(img, 1)
+            
             imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             results = self.hands.process(imgRGB)
 
@@ -47,7 +53,8 @@ class handcontroller:
             self.pTime = self.cTime
             
             cv2.putText(img, str(int(fps)), (10,70), cv2.FONT_HERSHEY_PLAIN, 3, (255,0,255), 3)
-            cv2.imshow("Hand Controller", img)
+            if self.showCam:
+                cv2.imshow("Hand Controller", img)
             cv2.waitKey(1)
 
             #return pos of hand like a mouse input
